@@ -5,7 +5,7 @@ This repository contains a Dockerfile to build a Docker image to run and test [C
 For more information, see:
 
 - [International Image Interoperability Framework](https://iiif.io/) (IIIF)
-- [Cantaloupe](https://medusa-project.github.io/cantaloupe/)
+- [Cantaloupe](https://cantaloupe-project.github.io/)
 - [Awesome IIIF](https://github.com/IIIF/awesome-iiif)
 
 ## Cantaloupe
@@ -52,4 +52,4 @@ To view _General view, looking southwest to Manhattan from Manhattan Bridge, Man
 See:
 
 - [`config/delegates.rb`](config/delegates.rb)
-- https://medusa-project.github.io/cantaloupe/manual/4.0/delegate-script.html
+- https://cantaloupe-project.github.io/manual/4.0/delegate-script.html
