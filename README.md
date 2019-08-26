@@ -5,7 +5,7 @@ This repository contains a Dockerfile to build a Docker image to run and test [C
 For more information, see:
 
 - [International Image Interoperability Framework](https://iiif.io/) (IIIF)
-- [Cantaloupe](https://medusa-project.github.io/cantaloupe/)
+- [Cantaloupe](https://github.com/cantaloupe-project/cantaloupe/)
 - [Awesome IIIF](https://github.com/IIIF/awesome-iiif)
 
 ## Cantaloupe
