@@ -1,3 +1,5 @@
+require 'java'
+
 ##
 # Sample Ruby delegate script containing stubs and documentation for all
 # available delegate methods. See the user manual for more information.
@@ -56,6 +58,7 @@ class CustomDelegate
   #
   attr_accessor :context
   IMAGES_DIR = '/images/'
+  IMAGES_EDEPOT_LOCAL_DIR = IMAGES_DIR + 'edepot/'
 
   def identifier_parts
     identifier = context['identifier']
@@ -92,6 +95,10 @@ class CustomDelegate
   # @return [Boolean,Hash<String,Object>] See above.
   #
   def authorize(options = {})
+    namespace, identifier = identifier_parts()
+
+    Java::edu.illinois.library.cantaloupe.script.Logger.warn 'identifier' + identifier
+
     true
   end
 
@@ -131,10 +138,16 @@ class CustomDelegate
   def source(options = {})
     namespace, identifier = identifier_parts()
 
+    Java::edu.illinois.library.cantaloupe.script.Logger.trace 'identifier: ' + identifier
+
     case namespace
-    when 'objectstore', 'edepot', 'beeldbank' then 'HttpSource'
-    else 'FilesystemSource'
+    when 'objectstore', 'edepot', 'beeldbank' then source = 'HttpSource'
+    when 'edepot_local' then source = 'FilesystemSource'
+    else source = 'FilesystemSource'
     end
+
+    Java::edu.illinois.library.cantaloupe.script.Logger.debug 'using source: ' + source
+    source
   end
 
   ##
@@ -151,7 +164,18 @@ class CustomDelegate
   #                      given identifier, or nil if not found.
   #
   def filesystemsource_pathname(options = {})
-    IMAGES_DIR  + context['identifier']
+    namespace, identifier = identifier_parts()
+
+    Java::edu.illinois.library.cantaloupe.script.Logger.trace 'namespace: ' + namespace
+
+    if namespace === 'edepot_local'
+      Java::edu.illinois.library.cantaloupe.script.Logger.trace 'identifier: ' + identifier
+      parts = identifier.split('/')
+      Java::edu.illinois.library.cantaloupe.script.Logger.debug 'parts: ' + parts.join(', ')
+      IMAGES_EDEPOT_LOCAL_DIR + parts.join('_')
+    else
+      IMAGES_DIR  + context['identifier']
+    end
   end
 
   ##

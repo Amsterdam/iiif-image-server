@@ -5,8 +5,6 @@ ARG MAVEN_OPTS
 
 EXPOSE 8182
 
-VOLUME /images
-
 # Update packages and install tools
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
