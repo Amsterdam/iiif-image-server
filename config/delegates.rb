@@ -55,6 +55,7 @@ class CustomDelegate
   # @return [Hash] Request context.
   #
   attr_accessor :context
+  IMAGES_DIR = '/images/'
 
   def identifier_parts
     identifier = context['identifier']
@@ -150,6 +151,7 @@ class CustomDelegate
   #                      given identifier, or nil if not found.
   #
   def filesystemsource_pathname(options = {})
+    IMAGES_DIR  + context['identifier']
   end
 
   ##
