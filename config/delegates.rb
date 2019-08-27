@@ -1,5 +1,7 @@
 require 'java'
 
+
+
 ##
 # Sample Ruby delegate script containing stubs and documentation for all
 # available delegate methods. See the user manual for more information.
@@ -59,11 +61,27 @@ class CustomDelegate
   attr_accessor :context
   IMAGES_DIR = '/images/'
   IMAGES_EDEPOT_LOCAL_DIR = IMAGES_DIR + 'edepot/'
+  EDEPOT_WHITELIST = IMAGES_EDEPOT_LOCAL_DIR + 'stadsarchief_whitelist_small'
+
+  def initialize()
+    @delegate_logger = Java::edu.illinois.library.cantaloupe.script.Logger
+  end
 
   def identifier_parts
     identifier = context['identifier']
     parts = identifier.split(':', 2)
     return parts.first, parts.last
+  end
+
+  def check_edepot_whitelist(identifier)
+    whitelist = File.read(EDEPOT_WHITELIST).split("\n") # double quotes are important!
+    if whitelist.include? identifier
+      @delegate_logger.trace "identifier #{identifier} in whitelist, access granted"
+      true
+    else
+      @delegate_logger.warn "access denied, #{identifier} not in whitelist: "
+      false
+    end
   end
 
   ##
@@ -97,9 +115,13 @@ class CustomDelegate
   def authorize(options = {})
     namespace, identifier = identifier_parts()
 
-    Java::edu.illinois.library.cantaloupe.script.Logger.warn 'identifier' + identifier
-
-    true
+    case namespace
+    when 'edepot', 'edepot_local' then
+      return check_edepot_whitelist(identifier)
+    else
+      @delegate_logger.trace 'no IIIF authorization for namespace ' + namespace
+      true
+    end
   end
 
   ##
@@ -138,7 +160,7 @@ class CustomDelegate
   def source(options = {})
     namespace, identifier = identifier_parts()
 
-    Java::edu.illinois.library.cantaloupe.script.Logger.trace 'identifier: ' + identifier
+    @delegate_logger.trace 'source switch statement, identifier: ' + identifier
 
     case namespace
     when 'objectstore', 'edepot', 'beeldbank' then source = 'HttpSource'
@@ -146,7 +168,7 @@ class CustomDelegate
     else source = 'FilesystemSource'
     end
 
-    Java::edu.illinois.library.cantaloupe.script.Logger.debug 'using source: ' + source
+    @delegate_logger.debug 'using source: ' + source
     source
   end
 
@@ -166,13 +188,13 @@ class CustomDelegate
   def filesystemsource_pathname(options = {})
     namespace, identifier = identifier_parts()
 
-    Java::edu.illinois.library.cantaloupe.script.Logger.trace 'namespace: ' + namespace
+    @delegate_logger.trace 'namespace: ' + namespace
 
     if namespace === 'edepot_local'
-      Java::edu.illinois.library.cantaloupe.script.Logger.trace 'identifier: ' + identifier
+      @delegate_logger.trace 'edepot_local identifier: ' + identifier
       parts = identifier.split('/')
-      Java::edu.illinois.library.cantaloupe.script.Logger.debug 'parts: ' + parts.join(', ')
-      IMAGES_EDEPOT_LOCAL_DIR + parts.join('_')
+      @delegate_logger.debug 'parts: ' + parts.join(', ')
+      IMAGES_EDEPOT_LOCAL_DIR + parts.join('-')
     else
       IMAGES_DIR  + context['identifier']
     end

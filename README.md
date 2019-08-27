@@ -72,10 +72,10 @@ These request will perform authorisation like the real edepot sourced images but
 
 To test the edepot whitelisting use the following links:
 
-*  http://localhost:8182/iiif/2/edepot_local:ST%2F00001%2FST00005%2F00001.jpg/full/1000,/0/default.png,
-relates to image `example_images/edepot/ST_00001_ST00005_00001.jpg`
-*  http://localhost:8182/iiif/2/edepot_local:ST%2F00002%2FST00745%2F00001.jpg/full/1000,/0/default.png,
-relates to image `example_images/edepot/ST_00002_ST00745_00001.jpg` 
+* http://localhost:8182/iiif/2/edepot_local:ST%2F00001%2FST00005_00001.jpg/full/1000,/0/default.png,
+**Not whitelisted**, relates to image `example_images/edepot/ST-00001-ST00005_00001.jpg`
+* http://localhost:8182/iiif/2/edepot_local:ST%2F00014%2FST00000109_00001.JPG/full/1000,/0/default.png,
+**Whitelisted**, relates to image `example_images/edepot/ST-00014-ST00000109_00001.JPG` 
 
 
 ## Delegate Script
