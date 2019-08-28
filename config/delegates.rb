@@ -1,19 +1,14 @@
-begin
-  require './load_props'
-rescue LoadError
-  # Straight up require fails when calling delates.rb from test script, use relative:
-  require_relative './load_props'
-end
+require 'uri'
 
-PROPERTIES_FILE = ENV['CANTALOUPE_PROPERTIES_PATH'] || "cantaloupe.properties"
-
+#
+# Logging
+#
 begin
   require 'java'
   $delegate_logger = Java::edu.illinois.library.cantaloupe.script.Logger
 rescue
   puts 'Could not load Cantaloupe logger'
 end
-
 
 def log(message, level='info')
   # Log message to cantaloupe logger if available with native Ruby fallback.
@@ -24,8 +19,12 @@ def log(message, level='info')
   end
 end
 
-$cantaloupe_properties = load_properties(PROPERTIES_FILE)
 
+#
+# Whitelist
+#
+# Loading whitelist from disk once and storing as global variable
+# Code outside of CustomDelegate because that class is instantiated EVERY request
 def get_whitelist(path)
   log("opening whitelist: #{path}")
 
@@ -34,12 +33,11 @@ def get_whitelist(path)
   return whitelist
 end
 
-# Loading whitelist from disk once and storing as global variable
-# Code outside of CustomDelegate because that class is instantiated EVERY request
-$whitelist_path = ENV['WHITELIST_PATH'] || $cantaloupe_properties['edepot.whitelist']
+$whitelist_path = ENV['WHITELIST_PATH']
 log("loading edepot whitelist from disk: #{$whitelist_path}...")
 $edepot_whitelist = get_whitelist($whitelist_path)
 log("loaded whitelist: #{$edepot_whitelist.length} documents whitelisted")
+
 
 ##
 # Sample Ruby delegate script containing stubs and documentation for all
@@ -110,10 +108,10 @@ class CustomDelegate
 
   def check_edepot_whitelist(identifier)
     if $edepot_whitelist.include? identifier
-      $delegate_logger.trace "access granted, identifier #{identifier} in whitelist"
+      log("access granted, identifier #{identifier} in whitelist", 'trace')
       true
     else
-      $delegate_logger.warn "access denied, identifier #{identifier} not in whitelist"
+      log("access denied, identifier #{identifier} not in whitelist", 'warn')
       false
     end
   end
@@ -153,7 +151,7 @@ class CustomDelegate
     when 'edepot', 'edepot_local' then
       return check_edepot_whitelist(identifier)
     else
-      $delegate_logger.trace 'no IIIF authorization for namespace ' + namespace
+      log('no IIIF authorization for namespace ' + namespace, 'trace')
       true
     end
   end
@@ -194,7 +192,7 @@ class CustomDelegate
   def source(options = {})
     namespace, identifier = identifier_parts()
 
-    $delegate_logger.trace 'source switch statement, identifier: ' + identifier
+    log('source switch statement, identifier: ' + identifier, 'trace')
 
     case namespace
     when 'objectstore', 'edepot', 'beeldbank' then source = 'HttpSource'
@@ -202,7 +200,7 @@ class CustomDelegate
     else source = 'FilesystemSource'
     end
 
-    $delegate_logger.debug 'using source: ' + source
+    log('using source: ' + source, 'debug')
     source
   end
 
@@ -222,12 +220,12 @@ class CustomDelegate
   def filesystemsource_pathname(options = {})
     namespace, identifier = identifier_parts()
 
-    $delegate_logger.trace 'namespace: ' + namespace
+    log('namespace: ' + namespace, 'trace')
 
     if namespace === 'edepot_local'
-      $delegate_logger.trace 'edepot_local identifier: ' + identifier
+      log('edepot_local identifier: ' + identifier, 'trace')
       parts = identifier.split('/')
-      $delegate_logger.debug 'parts: ' + parts.join(', ')
+      log('parts: ' + parts.join(', '), 'debug')
       IMAGES_EDEPOT_LOCAL_DIR + parts.join('-')
     else
       IMAGES_DIR  + context['identifier']
@@ -251,7 +249,7 @@ class CustomDelegate
   def httpsource_resource_info(options = {})
     namespace, identifier = identifier_parts()
 
-    # TODO: read base URIs from config file
+    # TODO: read base URIs from config file, see commit 850c9fd38b1072b2a4374f45cd810fad12bd45e8 for load_props code
     case namespace
     when 'objectstore' then
       return "https://f8d5776e78674418b6f9a605807e069a.objectstore.eu/Images/#{identifier}"

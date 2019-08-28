@@ -6,3 +6,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8182:8182"
+    environment:
+      - WHITELIST_PATH=stadsarchief_whitelist
