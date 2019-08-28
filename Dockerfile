@@ -40,9 +40,9 @@ RUN mkdir -p /var/log/cantaloupe /var/cache/cantaloupe \
     && cp /usr/local/cantaloupe/deps/Linux-x86-64/lib/* /usr/lib/
 
 RUN mkdir -p /etc/cantaloupe
+ENV GEM_PATH="/etc/cantaloupe:${GEM_PATH}"
 
-COPY config/cantaloupe.properties /etc/cantaloupe/cantaloupe.properties
-COPY config/delegates.rb /etc/cantaloupe/delegates.rb
+COPY config/ /etc/cantaloupe/
 
 COPY example-images/ /images/
 

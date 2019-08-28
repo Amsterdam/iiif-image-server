@@ -1,6 +1,45 @@
-require 'java'
+begin
+  require './load_props'
+rescue LoadError
+  # Straight up require fails when calling delates.rb from test script, use relative:
+  require_relative './load_props'
+end
+
+PROPERTIES_FILE = ENV['CANTALOUPE_PROPERTIES_PATH'] || "cantaloupe.properties"
+
+begin
+  require 'java'
+  $delegate_logger = Java::edu.illinois.library.cantaloupe.script.Logger
+rescue
+  puts 'Could not load Cantaloupe logger'
+end
 
 
+def log(message, level='info')
+  # Log message to cantaloupe logger if available with native Ruby fallback.
+  if $delegate_logger.nil?
+    puts "#{level}: #{message}"
+  else
+    $delegate_logger.public_send(level, message)  # call e.g.: Logger.info(message)
+  end
+end
+
+$cantaloupe_properties = load_properties(PROPERTIES_FILE)
+
+def get_whitelist(path)
+  log("opening whitelist: #{path}")
+
+  whitelist = File.read(path).split("\n") # double quotes are important!
+  whitelist.freeze # prevent modification, will be used by multiple threads
+  return whitelist
+end
+
+# Loading whitelist from disk once and storing as global variable
+# Code outside of CustomDelegate because that class is instantiated EVERY request
+$whitelist_path = ENV['WHITELIST_PATH'] || $cantaloupe_properties['edepot.whitelist']
+log("loading edepot whitelist from disk: #{$whitelist_path}...")
+$edepot_whitelist = get_whitelist($whitelist_path)
+log("loaded whitelist: #{$edepot_whitelist.length} documents whitelisted")
 
 ##
 # Sample Ruby delegate script containing stubs and documentation for all
@@ -63,10 +102,6 @@ class CustomDelegate
   IMAGES_EDEPOT_LOCAL_DIR = IMAGES_DIR + 'edepot/'
   EDEPOT_WHITELIST = IMAGES_EDEPOT_LOCAL_DIR + 'stadsarchief_whitelist_small'
 
-  def initialize()
-    @delegate_logger = Java::edu.illinois.library.cantaloupe.script.Logger
-  end
-
   def identifier_parts
     identifier = context['identifier']
     parts = identifier.split(':', 2)
@@ -74,12 +109,11 @@ class CustomDelegate
   end
 
   def check_edepot_whitelist(identifier)
-    whitelist = File.read(EDEPOT_WHITELIST).split("\n") # double quotes are important!
-    if whitelist.include? identifier
-      @delegate_logger.trace "identifier #{identifier} in whitelist, access granted"
+    if $edepot_whitelist.include? identifier
+      $delegate_logger.trace "access granted, identifier #{identifier} in whitelist"
       true
     else
-      @delegate_logger.warn "access denied, #{identifier} not in whitelist: "
+      $delegate_logger.warn "access denied, identifier #{identifier} not in whitelist"
       false
     end
   end
@@ -119,7 +153,7 @@ class CustomDelegate
     when 'edepot', 'edepot_local' then
       return check_edepot_whitelist(identifier)
     else
-      @delegate_logger.trace 'no IIIF authorization for namespace ' + namespace
+      $delegate_logger.trace 'no IIIF authorization for namespace ' + namespace
       true
     end
   end
@@ -160,7 +194,7 @@ class CustomDelegate
   def source(options = {})
     namespace, identifier = identifier_parts()
 
-    @delegate_logger.trace 'source switch statement, identifier: ' + identifier
+    $delegate_logger.trace 'source switch statement, identifier: ' + identifier
 
     case namespace
     when 'objectstore', 'edepot', 'beeldbank' then source = 'HttpSource'
@@ -168,7 +202,7 @@ class CustomDelegate
     else source = 'FilesystemSource'
     end
 
-    @delegate_logger.debug 'using source: ' + source
+    $delegate_logger.debug 'using source: ' + source
     source
   end
 
@@ -188,12 +222,12 @@ class CustomDelegate
   def filesystemsource_pathname(options = {})
     namespace, identifier = identifier_parts()
 
-    @delegate_logger.trace 'namespace: ' + namespace
+    $delegate_logger.trace 'namespace: ' + namespace
 
     if namespace === 'edepot_local'
-      @delegate_logger.trace 'edepot_local identifier: ' + identifier
+      $delegate_logger.trace 'edepot_local identifier: ' + identifier
       parts = identifier.split('/')
-      @delegate_logger.debug 'parts: ' + parts.join(', ')
+      $delegate_logger.debug 'parts: ' + parts.join(', ')
       IMAGES_EDEPOT_LOCAL_DIR + parts.join('-')
     else
       IMAGES_DIR  + context['identifier']
