@@ -7,4 +7,4 @@ set -x
 test ! -f "./Jenkinsfile" && echo "Jenkinsfile not found in $PWD, exiting..." && exit 1
 
 docker-compose build tester
-docker-compose up tester
+docker-compose up --exit-code-from tester tester

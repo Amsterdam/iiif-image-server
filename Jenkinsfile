@@ -30,6 +30,14 @@ node {
             }
         }
     }
+
+    stage("Test") {
+        tryStep "test", {
+            docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
+                sh './scripts/run_test_docker.sh'
+            }
+        }
+    }
 }
 
 //if ("${env.BRANCH_NAME}" == "master") {
