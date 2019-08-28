@@ -88,3 +88,10 @@ See:
 
 - [`config/delegates.rb`](config/delegates.rb)
 - https://cantaloupe-project.github.io/manual/4.0/delegate-script.html
+
+## Testing
+
+Run
+
+    ./test.sh
+   
