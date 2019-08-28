@@ -21,7 +21,7 @@ def is_true(obj)
 end
 expect_is_authorized = ARGV.length <= 2 ? true : is_true(ARGV[2])
 
-require_relative  '../config/delegates'
+require_relative  './delegates'
 
 
 #

@@ -1,10 +1,19 @@
-version: "3"
+version: "3.4"
 services:
   server:
     build:
       context: ./
       dockerfile: Dockerfile
+      target: server
     ports:
       - "8182:8182"
     environment:
       - WHITELIST_PATH=stadsarchief_whitelist
+
+  tester:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: tester
+    environment:
+    - WHITELIST_PATH=config/stadsarchief_whitelist

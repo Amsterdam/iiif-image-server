@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 AS base
 
 ARG MAVEN_OPTS
 # ENV CANTALOUPE_VERSION=4.0.3
@@ -39,16 +39,34 @@ RUN mkdir -p /var/log/cantaloupe /var/cache/cantaloupe \
     && chown -R cantaloupe /var/log/cantaloupe /var/cache/cantaloupe \
     && cp /usr/local/cantaloupe/deps/Linux-x86-64/lib/* /usr/lib/
 
+#
+# Server
+#
+FROM base as server
+
 RUN mkdir -p /etc/cantaloupe
 ENV GEM_PATH="/etc/cantaloupe:${GEM_PATH}"
 
 COPY config/ /etc/cantaloupe/
-
 COPY example-images/ /images/
 
-# USER root
 USER cantaloupe
-
 WORKDIR /etc/cantaloupe
-
 CMD ["sh", "-c", "java -Dcantaloupe.config=/etc/cantaloupe/cantaloupe.properties -Xmx2g -jar /usr/local/cantaloupe/cantaloupe-4.1-SNAPSHOT.war"]
+
+#
+# (unit) tester
+#
+FROM base AS tester
+
+# Install jruby interpreter to mimick Cantaloupe script behavior
+RUN apt-get update -y && \
+    apt-get install -y jruby && \
+    rm -rf /var/lib/apt/lists/*
+RUN rm /usr/bin/ruby && ln -s /usr/bin/jruby /usr/bin/ruby
+
+USER cantaloupe
+WORKDIR /home/cantaloupe/
+COPY config/ ./config/
+COPY scripts ./scripts/
+CMD ./scripts/run_test_local.sh

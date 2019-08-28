@@ -93,5 +93,8 @@ See:
 
 Run
 
-    ./test.sh
+    WHITELIST_PATH=config/stadsarchief_whitelist ./scripts/run_test_local.sh
    
+or 
+
+    ./scripts/run_test_docker.sh
