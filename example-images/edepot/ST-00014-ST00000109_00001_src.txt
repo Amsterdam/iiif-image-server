@@ -1,0 +1,4 @@
+https://beeldbank.amsterdam.nl/beeldbank/weergave/record?id=KB00200006000001
+
+Note that the extension is in uppercase: `.JPG`.
+The whitelist matching is case sensitive for both the filename and extension.

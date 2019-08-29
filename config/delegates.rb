@@ -1,3 +1,44 @@
+require 'uri'
+
+#
+# Logging
+#
+begin
+  require 'java'
+  $delegate_logger = Java::edu.illinois.library.cantaloupe.script.Logger
+rescue
+  puts 'Could not load Cantaloupe logger'
+end
+
+def log(message, level='info')
+  # Log message to cantaloupe logger if available with native Ruby fallback.
+  if $delegate_logger.nil?
+    puts "#{level}: #{message}"
+  else
+    $delegate_logger.public_send(level, message)  # call e.g.: Logger.info(message)
+  end
+end
+
+
+#
+# Whitelist
+#
+# Loading whitelist from disk once and storing as global variable
+# Code outside of CustomDelegate because that class is instantiated EVERY request
+def get_whitelist(path)
+  log("opening whitelist: #{path}")
+
+  whitelist = File.read(path).split("\n") # double quotes are important!
+  whitelist.freeze # prevent modification, will be used by multiple threads
+  return whitelist
+end
+
+$whitelist_path = ENV['WHITELIST_PATH']
+log("loading edepot whitelist from disk: #{$whitelist_path}...")
+$edepot_whitelist = get_whitelist($whitelist_path)
+log("loaded whitelist: #{$edepot_whitelist.length} documents whitelisted")
+
+
 ##
 # Sample Ruby delegate script containing stubs and documentation for all
 # available delegate methods. See the user manual for more information.
@@ -55,11 +96,24 @@ class CustomDelegate
   # @return [Hash] Request context.
   #
   attr_accessor :context
+  IMAGES_DIR = '/images/'
+  IMAGES_EDEPOT_LOCAL_DIR = IMAGES_DIR + 'edepot/'
+  EDEPOT_WHITELIST = IMAGES_EDEPOT_LOCAL_DIR + 'stadsarchief_whitelist_small'
 
   def identifier_parts
     identifier = context['identifier']
     parts = identifier.split(':', 2)
     return parts.first, parts.last
+  end
+
+  def check_edepot_whitelist(identifier)
+    if $edepot_whitelist.include? identifier
+      log("access granted, identifier #{identifier} in whitelist", 'trace')
+      true
+    else
+      log("access denied, identifier #{identifier} not in whitelist", 'warn')
+      false
+    end
   end
 
   ##
@@ -91,7 +145,15 @@ class CustomDelegate
   # @return [Boolean,Hash<String,Object>] See above.
   #
   def authorize(options = {})
-    true
+    namespace, identifier = identifier_parts()
+
+    case namespace
+    when 'edepot', 'edepot_local'
+      return check_edepot_whitelist(identifier)
+    else
+      log('no IIIF authorization for namespace ' + namespace, 'trace')
+      true
+    end
   end
 
   ##
@@ -130,10 +192,19 @@ class CustomDelegate
   def source(options = {})
     namespace, identifier = identifier_parts()
 
+    log('source switch statement, identifier: ' + identifier, 'trace')
+
     case namespace
-    when 'objectstore', 'edepot', 'beeldbank' then 'HttpSource'
-    else 'FilesystemSource'
+    when 'objectstore', 'edepot', 'beeldbank'
+      source = 'HttpSource'
+    when 'edepot_local'
+      source = 'FilesystemSource'
+    else
+      source = 'FilesystemSource'
     end
+
+    log('using source: ' + source, 'debug')
+    source
   end
 
   ##
@@ -150,6 +221,18 @@ class CustomDelegate
   #                      given identifier, or nil if not found.
   #
   def filesystemsource_pathname(options = {})
+    namespace, identifier = identifier_parts()
+
+    log('namespace: ' + namespace, 'trace')
+
+    if namespace === 'edepot_local'
+      log('edepot_local identifier: ' + identifier, 'trace')
+      parts = identifier.split('/')
+      log('parts: ' + parts.join(', '), 'debug')
+      IMAGES_EDEPOT_LOCAL_DIR + parts.join('-')
+    else
+      IMAGES_DIR  + context['identifier']
+    end
   end
 
   ##
@@ -169,13 +252,13 @@ class CustomDelegate
   def httpsource_resource_info(options = {})
     namespace, identifier = identifier_parts()
 
-    # TODO: read base URIs from config file
+    # TODO: read base URIs from config file, see commit 850c9fd38b1072b2a4374f45cd810fad12bd45e8 for load_props code
     case namespace
-    when 'objectstore' then
+    when 'objectstore'
       return "https://f8d5776e78674418b6f9a605807e069a.objectstore.eu/Images/#{identifier}"
-    when 'beeldbank' then
+    when 'beeldbank'
       return "https://beeldbank.amsterdam.nl/component/ams_memorixbeeld_download/?format=download&id=#{identifier}"
-    when 'edepot' then
+    when 'edepot'
       uri = URI.decode(identifier)
 
       return {
