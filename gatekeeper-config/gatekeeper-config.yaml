@@ -2,11 +2,13 @@
 # See https://www.keycloak.org/docs/latest/securing_apps/index.html#_keycloak_generic_adapter
 
 # The following is either secret or environment dependent:
+# * secure-cookie
 # * client_id
 # * client_secret
 # * discovery_url
 #
-# You can set them using environment variables:
+# You can set them using environment variables (in an .env file for example):
+# * PROXY_SECURE_COOKIE=false
 # * PROXY_CLIENT_ID
 # * PROXY_CLIENT_SECRET
 # * GATEKEEPER_DISCOVERY_URL, e.g.: https://iam.amsterdam.nl/auth/realms/datapunt-acc
@@ -15,23 +17,9 @@ enable-default-deny: true
 listen: 0.0.0.0:8080
 #redirection-url: http://127.0.0.1:8080
 upstream-url: http://127.0.0.1:8182
-#resources:
-#- uri: /admin*
-#  methods:
-#  - GET
-#  roles:
-#  - client:test1
-#  - client:test2
-#  require-any-role: true
-#  groups:
-#  - admins
-#  - users
-#- uri: /backend*
-#  roles:
-#  - client:test1
-#- uri: /public/*
-#  white-listed: true
-#headers:
-#  myheader1: value_1
-#  myheader2: value_2
-
+verbose: true
+secure-cookie: true # set this to false for local dev
+resources:
+- uri: /*
+  roles:
+  - edepot_private

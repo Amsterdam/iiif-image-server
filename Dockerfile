@@ -64,7 +64,6 @@ COPY example-images/ /images/
 USER datapunt
 WORKDIR /app/cantaloupe
 COPY scripts ./scripts/
-#CMD ["sh", "-c", "java -Dcantaloupe.config=/app/cantaloupe/cantaloupe.properties -Xmx2g -jar /usr/local/cantaloupe/cantaloupe-4.1-SNAPSHOT.war"]
 CMD "./scripts/start-services.sh"
 
 

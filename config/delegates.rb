@@ -106,6 +106,10 @@ class CustomDelegate
     return parts.first, parts.last
   end
 
+  def decode_edepot_identifier(identifier)
+    return identifier.gsub('$', '/')
+  end
+
   def check_edepot_whitelist(identifier)
     if $edepot_whitelist.include? identifier
       log("access granted, identifier #{identifier} in whitelist", 'trace')
@@ -149,7 +153,8 @@ class CustomDelegate
 
     case namespace
     when 'edepot', 'edepot_local'
-      return check_edepot_whitelist(identifier)
+      edepot_identifier = decode_edepot_identifier(identifier)
+      return check_edepot_whitelist(edepot_identifier)
     else
       log('no IIIF authorization for namespace ' + namespace, 'trace')
       true
@@ -227,7 +232,7 @@ class CustomDelegate
 
     if namespace === 'edepot_local'
       log('edepot_local identifier: ' + identifier, 'trace')
-      parts = identifier.split('/')
+      parts = identifier.split('$')
       log('parts: ' + parts.join(', '), 'debug')
       IMAGES_EDEPOT_LOCAL_DIR + parts.join('-')
     else
@@ -259,7 +264,8 @@ class CustomDelegate
     when 'beeldbank'
       return "https://beeldbank.amsterdam.nl/component/ams_memorixbeeld_download/?format=download&id=#{identifier}"
     when 'edepot'
-      uri = URI.decode(identifier)
+      edepot_identifier = decode_edepot_identifier(identifier)
+      uri = URI.decode(edepot_identifier)
 
       return {
         "uri" => "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/#{uri}",
