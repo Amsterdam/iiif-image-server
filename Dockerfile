@@ -3,7 +3,7 @@ FROM ubuntu:18.04 AS base
 ARG MAVEN_OPTS
 # ENV CANTALOUPE_VERSION=4.0.3
 
-EXPOSE 8182
+EXPOSE 8080
 
 # Update packages and install tools
 RUN apt-get update -y && \
@@ -14,18 +14,21 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Run non privileged
-RUN adduser --system cantaloupe
+RUN adduser --system datapunt
 
 WORKDIR /tmp
 
 # Get and unpack Cantaloupe release archive
 # TODO: directory name might change!
-RUN wget https://github.com/Amsterdam/cantaloupe/archive/develop.zip
-RUN unzip develop.zip
-RUN env && cd /tmp/cantaloupe-develop && mvn clean package -DskipTests
+#RUN wget -O cantaloupe-git.zip https://github.com/Amsterdam/cantaloupe/archive/develop.zip
+RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/release/4.1.zip
+#RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/develop.zip
+RUN unzip cantaloupe-git.zip
+RUN ls
+RUN cd /tmp/cantaloupe-release-4.1 && mvn clean package -DskipTests
 RUN cd /usr/local \
-      && unzip /tmp/cantaloupe-develop/target/cantaloupe-4.1-SNAPSHOT.zip \
-      && ln -s cantaloupe-4.1-SNAPSHOT cantaloupe
+      && unzip /tmp/cantaloupe-release-4.1/target/cantaloupe-4.1.4-SNAPSHOT.zip \
+      && ln -s cantaloupe-4.1.4-SNAPSHOT cantaloupe
 
 # RUN curl -OL https://github.com/medusa-project/cantaloupe/releases/download/v$CANTALOUPE_VERSION/Cantaloupe-$CANTALOUPE_VERSION.zip \
 #     && mkdir -p /usr/local/ \
@@ -36,23 +39,36 @@ RUN cd /usr/local \
 #     && rm /tmp/Cantaloupe-$CANTALOUPE_VERSION.zip
 
 RUN mkdir -p /var/log/cantaloupe /var/cache/cantaloupe \
-    && chown -R cantaloupe /var/log/cantaloupe /var/cache/cantaloupe \
+    && chown -R datapunt /var/log/cantaloupe /var/cache/cantaloupe \
     && cp /usr/local/cantaloupe/deps/Linux-x86-64/lib/* /usr/lib/
+
+RUN mkdir -p /var/log/gatekeeper \
+    && chown -R datapunt /var/log/gatekeeper
+
+RUN mkdir -p /app && chown datapunt /app
 
 #
 # Server
 #
 FROM base as server
 
-RUN mkdir -p /etc/cantaloupe
-ENV GEM_PATH="/etc/cantaloupe:${GEM_PATH}"
+# Gatekeeper
+RUN mkdir -p /app/gatekeeper
+ADD "https://nexus.data.amsterdam.nl/repository/keycloak/bin/keycloak-gatekeeper.latest" /app/gatekeeper/
+RUN chmod 755 /app/gatekeeper/keycloak-gatekeeper.latest
+RUN ln -s /app/gatekeeper/keycloak-gatekeeper.latest /usr/bin/keycloak-gatekeeper
+COPY gatekeeper-config /app/gatekeeper/
 
-COPY config/ /etc/cantaloupe/
+# Cantaloupe
+RUN mkdir -p /app/cantaloupe
+ENV GEM_PATH="/app/cantaloupe:${GEM_PATH}"
+COPY config/ /app/cantaloupe/
 COPY example-images/ /images/
+USER datapunt
+WORKDIR /app/cantaloupe
+COPY scripts ./scripts/
+CMD "./scripts/start-services.sh"
 
-USER cantaloupe
-WORKDIR /etc/cantaloupe
-CMD ["sh", "-c", "java -Dcantaloupe.config=/etc/cantaloupe/cantaloupe.properties -Xmx2g -jar /usr/local/cantaloupe/cantaloupe-4.1-SNAPSHOT.war"]
 
 #
 # (unit) tester
@@ -65,8 +81,8 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN rm /usr/bin/ruby && ln -s /usr/bin/jruby /usr/bin/ruby
 
-USER cantaloupe
-WORKDIR /home/cantaloupe/
+USER datapunt
+WORKDIR /home/datapunt/
 COPY config/ ./config/
 COPY scripts ./scripts/
 CMD ./scripts/run_test_local.sh
