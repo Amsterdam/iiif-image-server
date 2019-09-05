@@ -20,12 +20,15 @@ WORKDIR /tmp
 
 # Get and unpack Cantaloupe release archive
 # TODO: directory name might change!
-RUN wget https://github.com/Amsterdam/cantaloupe/archive/develop.zip
-RUN unzip develop.zip
-RUN cd /tmp/cantaloupe-develop && mvn clean package -DskipTests
+#RUN wget -O cantaloupe-git.zip https://github.com/Amsterdam/cantaloupe/archive/develop.zip
+RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/release/4.1.zip
+#RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/develop.zip
+RUN unzip cantaloupe-git.zip
+RUN ls
+RUN cd /tmp/cantaloupe-release-4.1 && mvn clean package -DskipTests
 RUN cd /usr/local \
-      && unzip /tmp/cantaloupe-develop/target/cantaloupe-4.1-SNAPSHOT.zip \
-      && ln -s cantaloupe-4.1-SNAPSHOT cantaloupe
+      && unzip /tmp/cantaloupe-release-4.1/target/cantaloupe-4.1.4-SNAPSHOT.zip \
+      && ln -s cantaloupe-4.1.4-SNAPSHOT cantaloupe
 
 # RUN curl -OL https://github.com/medusa-project/cantaloupe/releases/download/v$CANTALOUPE_VERSION/Cantaloupe-$CANTALOUPE_VERSION.zip \
 #     && mkdir -p /usr/local/ \

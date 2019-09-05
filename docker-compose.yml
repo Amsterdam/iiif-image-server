@@ -12,6 +12,7 @@ services:
       - PROXY_CLIENT_ID
       - PROXY_CLIENT_SECRET
       - PROXY_DISCOVERY_URL
+      - PROXY_SECURE_COOKIE
 
   tester:
     build:
