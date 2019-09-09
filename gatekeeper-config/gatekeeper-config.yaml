@@ -23,3 +23,13 @@ resources:
 - uri: /*
   roles:
   - edepot_private
+
+# Allow health check to pass
+- uri: / # Root only!
+  white-listed: true
+- uri: /favicon.ico
+  white-listed: true
+- uri: /static/styles/landing.css
+  white-listed: true
+- uri: /static/images/cantaloupe-320.png
+  white-listed: true
