@@ -12,7 +12,7 @@ echo "## objectstore resolution"
 echo ""
 
 echo "## edepot resolution"
-./config/delegates_test.rb edepot:SA$00702$SA00632608_00001.jpg "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/SA/00702/SA00632608_00001.jpg" false
+./config/delegates_test.rb 'edepot:SA$00702$SA00632608_00001.jpg' "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/SA/00702/SA00632608_00001.jpg" false
 echo ""
 
 echo "## beeldbank resolution"
@@ -27,9 +27,9 @@ echo ""
 echo "# Testing whitelisting"
 
 echo "## Whitelisted"
-./config/delegates_test.rb edepot_local:ST$00014$ST00000109_00001.JPG "/images/edepot/ST-00014-ST00000109_00001.JPG"
+./config/delegates_test.rb 'edepot_local:ST$00014$ST00000109_00001.JPG' "/images/edepot/ST-00014-ST00000109_00001.JPG"
 echo ""
 
 echo "## Not whitelisted"
-./config/delegates_test.rb edepot_local:ST$00001$ST00005_00001.jpg "/images/edepot/ST-00001-ST00005_00001.jpg" false
+./config/delegates_test.rb 'edepot_local:ST$00001$ST00005_00001.jpg' "/images/edepot/ST-00001-ST00005_00001.jpg" false
 echo ""
