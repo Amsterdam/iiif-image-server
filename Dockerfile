@@ -52,10 +52,10 @@ FROM base as server
 
 # Gatekeeper
 RUN mkdir -p /app/gatekeeper
-ADD "https://nexus.data.amsterdam.nl/repository/keycloak/bin/keycloak-gatekeeper.latest" /app/gatekeeper/
+#ADD "https://nexus.data.amsterdam.nl/repository/keycloak/bin/keycloak-gatekeeper.latest" /app/gatekeeper/ # Preferable, but nexus not always available from build server
+COPY gatekeeper-config /app/gatekeeper/
 RUN chmod 755 /app/gatekeeper/keycloak-gatekeeper.latest
 RUN ln -s /app/gatekeeper/keycloak-gatekeeper.latest /usr/bin/keycloak-gatekeeper
-COPY gatekeeper-config /app/gatekeeper/
 
 # Cantaloupe
 RUN mkdir -p /app/cantaloupe
