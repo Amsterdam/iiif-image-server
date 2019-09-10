@@ -120,6 +120,12 @@ class CustomDelegate
     end
   end
 
+  def is_authorized_access_private()
+    roles = headers['X-Auth-Roles'].split(" ")
+    log("roles in header: #{roles}", 'trace')
+    return roles.include? 'edepot_private'
+  end
+
   ##
   # Returns authorization status for the current request. Will be called upon
   # all requests to all public endpoints.
@@ -154,7 +160,12 @@ class CustomDelegate
     case namespace
     when 'edepot', 'edepot_local'
       edepot_identifier = decode_edepot_identifier(identifier)
-      return check_edepot_whitelist(edepot_identifier)
+
+      if is_authorized_access_private()
+        return true
+      else
+        return check_edepot_whitelist(edepot_identifier)
+      end
     else
       log('no IIIF authorization for namespace ' + namespace, 'trace')
       true
