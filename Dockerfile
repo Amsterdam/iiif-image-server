@@ -25,8 +25,8 @@ RUN unzip cantaloupe-git.zip
 RUN ls
 RUN cd /tmp/cantaloupe-release-4.1 && mvn clean package -DskipTests
 RUN cd /usr/local \
-      && unzip /tmp/cantaloupe-release-4.1/target/cantaloupe-4.1.4-SNAPSHOT.zip \
-      && ln -s cantaloupe-4.1.4-SNAPSHOT cantaloupe
+      && unzip /tmp/cantaloupe-release-4.1/target/cantaloupe-4.1.4.zip \
+      && ln -s cantaloupe-4.1.4 cantaloupe
 
 # RUN curl -OL https://github.com/medusa-project/cantaloupe/releases/download/v$CANTALOUPE_VERSION/Cantaloupe-$CANTALOUPE_VERSION.zip \
 #     && mkdir -p /usr/local/ \
