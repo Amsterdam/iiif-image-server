@@ -122,7 +122,7 @@ class CustomDelegate
 
   def is_authorized_access_private()
     headers = context.fetch('request_headers', {})
-    roles = headers.fetch('X-Auth-Roles', '').split(" ")
+    roles = headers.fetch('X-Auth-Roles', '').split(',')
     log("roles in header: #{roles}", 'trace')
     return roles.include? 'edepot_private'
   end
