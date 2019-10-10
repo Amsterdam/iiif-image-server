@@ -22,7 +22,9 @@ secure-cookie: true # set this to false for local dev
 resources:
 - uri: /*
   roles:
+  - edepot_public
   - edepot_private
+  require-any-role: true # Match at least one of the roles
 
 # Allow health check to pass
 - uri: / # Root only!
