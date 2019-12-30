@@ -20,12 +20,12 @@ WORKDIR /tmp
 RUN echo 'rebuilding'
 # Get and unpack Cantaloupe release archive
 # TODO: directory name might change!
-RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/release/4.1.zip
+RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v4.1.4.zip
 RUN unzip cantaloupe-git.zip
 RUN ls
-RUN cd /tmp/cantaloupe-release-4.1 && mvn clean package -DskipTests
+RUN cd /tmp/cantaloupe-4.1.4 && mvn clean package -DskipTests
 RUN cd /usr/local \
-      && unzip /tmp/cantaloupe-release-4.1/target/cantaloupe-4.1.4.zip \
+      && unzip /tmp/cantaloupe-4.1.4/target/cantaloupe-4.1.4.zip \
       && ln -s cantaloupe-4.1.4 cantaloupe
 
 # RUN curl -OL https://github.com/medusa-project/cantaloupe/releases/download/v$CANTALOUPE_VERSION/Cantaloupe-$CANTALOUPE_VERSION.zip \
