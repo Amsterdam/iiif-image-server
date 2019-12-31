@@ -156,21 +156,7 @@ class CustomDelegate
   # @return [Boolean,Hash<String,Object>] See above.
   #
   def authorize(options = {})
-    namespace, identifier = identifier_parts()
-
-    case namespace
-    when 'edepot', 'edepot_local'
-      edepot_identifier = decode_edepot_identifier(identifier)
-
-      if is_authorized_access_private()
-        return true
-      else
-        return check_edepot_whitelist(edepot_identifier)
-      end
-    else
-      log('no IIIF authorization for namespace ' + namespace, 'trace')
-      true
-    end
+    return true
   end
 
   ##

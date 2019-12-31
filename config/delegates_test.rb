@@ -1,9 +1,5 @@
 #!/usr/bin/env ruby
 
-if ENV['WHITELIST_PATH'].nil?
-  raise 'missing env variable: WHITELIST_PATH, usage WHITELIST_PATH=config/stadsarchief_whitelist ./test/test.rb <identifier>'
-end
-
 usage_string = 'Usage: ./test.rb <image identifier> <expected url> <expected authorization, default true>'
 
 identifier = ARGV[0]

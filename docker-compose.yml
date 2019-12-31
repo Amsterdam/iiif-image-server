@@ -8,7 +8,6 @@ services:
     ports:
       - "8080:8182"      
     environment:
-      - WHITELIST_PATH=stadsarchief_whitelist
       - PROXY_CLIENT_ID
       - PROXY_CLIENT_SECRET
       - PROXY_DISCOVERY_URL
@@ -19,5 +18,3 @@ services:
       context: ./
       dockerfile: Dockerfile
       target: tester
-    environment:
-      - WHITELIST_PATH=config/stadsarchief_whitelist

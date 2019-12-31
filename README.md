@@ -23,20 +23,11 @@ Get a DataPunt IDP user with the edepot_private role.
 
 First make sure
 
-To start Cantaloupe and Gatekeeper, run:
+To start Cantaloupe, run:
 
     docker-compose up --build server
 
-Now, Cantaloupe is running on port 8182 behind [gatekeeper on port 8080](http://localhost:8080/).
-
-### Gatekeeper
-
-Gatekeeper is installed from the binary in Nexus in the **Datapunt2 environment**.
-To build the Docker image you will need to connect to the **Datapunt2 VPN**!
-
-The authentication flow stores some cookies.
-In order for this to work you can not use localhost in the URL.
-Instead use: http:127.0.0.1:8080/
+Now, Cantaloupe is running on port 8080 (http://localhost:8080/).
 
 ### Cantaloupe 
 By default, Cantaloupe will serve the images in the [`example-images`](example-images) directory. This directory currently contains one image: _[General view, looking southwest to Manhattan from Manhattan Bridge, Manhattan](https://digitalcollections.nypl.org/items/510d47d9-4fb6-a3d9-e040-e00a18064a99)_ from the New York Public Library's Digital Collections.
@@ -85,25 +76,19 @@ An example URI is as follows:
 
 ### edepot whitelisting
 
-Only a limited set of images from the edepot are served.
-These images are defined in a whitelist.
+Previously, this code did image whitelisting and authorization using gatekeeper. Since this server will now be running behind the [iiif-auth-proxy], which implements all athorization logic, all whitelisting and authorization with gatekeeper has been removed from this code.
 
-To test the whitelisting locally a local edepot namespace is used.
-These request will perform authorisation like the real edepot sourced images but are fetched from the filesystem. 
-
-To test the edepot whitelisting use the following links:
+To test restricted and unrestricted images we've got the  
 
 * http://localhost:8080/iiif/2/edepot_local:ST$00001$ST00005_00001.jpg/full/1000,/0/default.png,
-**Not whitelisted**, relates to image `example_images/edepot/ST-00001-ST00005_00001.jpg`
+**Restricted image**, relates to image `example_images/edepot/ST-00001-ST00005_00001.jpg`
 * http://localhost:8080/iiif/2/edepot_local:ST$00014$ST00000109_00001.JPG/full/1000,/0/default.png,
-**Whitelisted**, relates to image `example_images/edepot/ST-00014-ST00000109_00001.JPG` 
+**Unrestricted**, relates to image `example_images/edepot/ST-00014-ST00000109_00001.JPG` 
 
 
 ## Delegate Script
 
-Source resolution and (limited) authorization is done through the "delegate" script.
-Depending on the "identifier" part of the URI the filesystem or http source is used.
-See the `config/delegates.rb` script for exact resolution rules.
+Source resolution is done through the "delegate" script. Depending on the "identifier" part of the URI the filesystem or http source is used. See the `config/delegates.rb` script for exact resolution rules.
 
 See:
 
@@ -113,9 +98,5 @@ See:
 ## Testing
 
 Run
-
-    WHITELIST_PATH=config/stadsarchief_whitelist ./scripts/run_test_local.sh
-   
-or 
 
     ./scripts/run_test_docker.sh
