@@ -20,24 +20,6 @@ def log(message, level='info')
 end
 
 
-#
-# Whitelist
-#
-# Loading whitelist from disk once and storing as global variable
-# Code outside of CustomDelegate because that class is instantiated EVERY request
-def get_whitelist(path)
-  log("opening whitelist: #{path}")
-
-  whitelist = File.read(path).split("\n") # double quotes are important!
-  whitelist.freeze # prevent modification, will be used by multiple threads
-  return whitelist
-end
-
-$whitelist_path = ENV['WHITELIST_PATH']
-log("loading edepot whitelist from disk: #{$whitelist_path}...")
-$edepot_whitelist = get_whitelist($whitelist_path)
-log("loaded whitelist: #{$edepot_whitelist.length} documents whitelisted")
-
 
 ##
 # Sample Ruby delegate script containing stubs and documentation for all
@@ -98,7 +80,6 @@ class CustomDelegate
   attr_accessor :context
   IMAGES_DIR = '/images/'
   IMAGES_EDEPOT_LOCAL_DIR = IMAGES_DIR + 'edepot/'
-  EDEPOT_WHITELIST = IMAGES_EDEPOT_LOCAL_DIR + 'stadsarchief_whitelist_small'
 
   def identifier_parts
     identifier = context['identifier']
@@ -108,23 +89,6 @@ class CustomDelegate
 
   def decode_edepot_identifier(identifier)
     return identifier.gsub('$', '/')
-  end
-
-  def check_edepot_whitelist(identifier)
-    if $edepot_whitelist.include? identifier
-      log("access granted, identifier #{identifier} in whitelist", 'trace')
-      true
-    else
-      log("access denied, identifier #{identifier} not in whitelist", 'warn')
-      false
-    end
-  end
-
-  def is_authorized_access_private()
-    headers = context.fetch('request_headers', {})
-    roles = headers.fetch('X-Auth-Roles', '').split(',')
-    log("roles in header: #{roles}", 'trace')
-    return roles.include? 'edepot_private'
   end
 
   ##
@@ -156,21 +120,10 @@ class CustomDelegate
   # @return [Boolean,Hash<String,Object>] See above.
   #
   def authorize(options = {})
-    namespace, identifier = identifier_parts()
-
-    case namespace
-    when 'edepot', 'edepot_local'
-      edepot_identifier = decode_edepot_identifier(identifier)
-
-      if is_authorized_access_private()
-        return true
-      else
-        return check_edepot_whitelist(edepot_identifier)
-      end
-    else
-      log('no IIIF authorization for namespace ' + namespace, 'trace')
-      true
-    end
+    # This function used to contain some logic for whitelisted images. This has
+    # been removed so that all images are served. Any authorization logic will now
+    # be done by the iiif-auth-proxy which sits in front of this iiif server.
+    return true
   end
 
   ##

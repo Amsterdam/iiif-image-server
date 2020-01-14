@@ -5,12 +5,13 @@ ARG MAVEN_OPTS
 EXPOSE 8080
 
 # Update packages and install tools
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
-      wget unzip curl \
+# net-tools is added below to have netstat available for debugging
+RUN apt update -y
+RUN apt install -y --no-install-recommends \
+      wget unzip curl net-tools \
       graphicsmagick imagemagick ffmpeg python \
-      maven default-jre && \
-    rm -rf /var/lib/apt/lists/*
+      maven default-jre
+RUN rm -rf /var/lib/apt/lists/*
 
 # Run non privileged
 RUN adduser --system datapunt
@@ -19,22 +20,14 @@ WORKDIR /tmp
 
 RUN echo 'rebuilding'
 # Get and unpack Cantaloupe release archive
-# TODO: directory name might change!
-RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/release/4.1.zip
+# TODO: use $CANTALOUPE_VERSION instead of hardcoding it here
+RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v4.1.4.zip
 RUN unzip cantaloupe-git.zip
 RUN ls
-RUN cd /tmp/cantaloupe-release-4.1 && mvn clean package -DskipTests
+RUN cd /tmp/cantaloupe-4.1.4 && mvn clean package -DskipTests
 RUN cd /usr/local \
-      && unzip /tmp/cantaloupe-release-4.1/target/cantaloupe-4.1.4.zip \
+      && unzip /tmp/cantaloupe-4.1.4/target/cantaloupe-4.1.4.zip \
       && ln -s cantaloupe-4.1.4 cantaloupe
-
-# RUN curl -OL https://github.com/medusa-project/cantaloupe/releases/download/v$CANTALOUPE_VERSION/Cantaloupe-$CANTALOUPE_VERSION.zip \
-#     && mkdir -p /usr/local/ \
-#     && cd /usr/local \
-#     && unzip /tmp/Cantaloupe-$CANTALOUPE_VERSION.zip \
-#     && ln -s cantaloupe-$CANTALOUPE_VERSION cantaloupe \
-#     && rm -rf /tmp/Cantaloupe-$CANTALOUPE_VERSION \
-#     && rm /tmp/Cantaloupe-$CANTALOUPE_VERSION.zip
 
 RUN mkdir -p /var/log/cantaloupe /var/cache/cantaloupe \
     && chown -R datapunt /var/log/cantaloupe /var/cache/cantaloupe \
@@ -49,13 +42,6 @@ RUN mkdir -p /app && chown datapunt /app
 # Server
 #
 FROM base as server
-
-# Gatekeeper
-RUN mkdir -p /app/gatekeeper
-#ADD "https://nexus.data.amsterdam.nl/repository/keycloak/bin/keycloak-gatekeeper.latest" /app/gatekeeper/ # Preferable, but nexus not always available from build server
-COPY gatekeeper-config /app/gatekeeper/
-RUN chmod 755 /app/gatekeeper/keycloak-gatekeeper.latest
-RUN ln -s /app/gatekeeper/keycloak-gatekeeper.latest /usr/bin/keycloak-gatekeeper
 
 # Cantaloupe
 RUN mkdir -p /app/cantaloupe
