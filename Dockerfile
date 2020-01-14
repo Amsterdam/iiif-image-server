@@ -5,7 +5,8 @@ ARG MAVEN_OPTS
 EXPOSE 8080
 
 # Update packages and install tools
-RUN apt-get update -y
+# net-tools is added below to have netstat available for debugging
+RUN apt update -y
 RUN apt install -y --no-install-recommends \
       wget unzip curl net-tools \
       graphicsmagick imagemagick ffmpeg python \
