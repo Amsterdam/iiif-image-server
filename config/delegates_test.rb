@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-usage_string = 'Usage: ./test.rb <image identifier> <expected url> <expected authorization, default true>'
+usage_string = 'Usage: ./test.rb <image identifier> <expected url>'
 
 identifier = ARGV[0]
 if !identifier
@@ -15,7 +15,6 @@ end
 def is_true(obj)
   obj.to_s.downcase == "true"
 end
-expect_is_authorized = ARGV.length <= 2 ? true : is_true(ARGV[2])
 
 require_relative  './delegates'
 
@@ -29,19 +28,6 @@ obj.context = {
   'identifier' => identifier,
   'client_ip' => '127.0.0.1'
 }
-
-#
-# Checking authorization
-#
-is_authorized = obj.authorize
-if expect_is_authorized == is_authorized
-  puts '✓ authorization matches expectation'
-else
-  puts '✘ authorization does not match expectation'
-  puts "expected      :\t#{expect_is_authorized}"
-  puts "is_authorized :\t#{is_authorized}"
-  raise 'mismatch'
-end
 
 
 #
