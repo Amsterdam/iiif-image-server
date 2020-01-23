@@ -80,6 +80,7 @@ class CustomDelegate
   attr_accessor :context
   IMAGES_DIR = '/images/'
   IMAGES_EDEPOT_LOCAL_DIR = IMAGES_DIR + 'edepot/'
+  PLACEHOLDER_IMAGE = 'duckhorse.jpg'
 
   def identifier_parts
     identifier = context['identifier']
@@ -153,30 +154,21 @@ class CustomDelegate
     {}
   end
 
-  ##
-  # Tells the server which source to use for the given identifier.
-  #
-  # @param options [Hash] Empty hash.
-  # @return [String] Source name.
-  #
   def source(options = {})
     namespace, identifier = identifier_parts()
 
     log('source switch statement, identifier: ' + identifier, 'trace')
-
-    case namespace
-    when 'objectstore', 'edepot', 'beeldbank'
+    # This flag is meant for local and acceptance environment to only allow accessing 
+    # the filesystem
+    if ENV['USE_LOCAL_SOURCE'] == false then
       source = 'HttpSource'
-    when 'edepot_local'
-      source = 'FilesystemSource'
     else
       source = 'FilesystemSource'
     end
-
+    
     log('using source: ' + source, 'debug')
     source
   end
-
   ##
   # @param options [Hash] Empty hash.
   # @return [String,nil] Blob key of the image corresponding to the given
@@ -195,11 +187,13 @@ class CustomDelegate
 
     log('namespace: ' + namespace, 'trace')
 
-    if namespace === 'edepot_local'
-      log('edepot_local identifier: ' + identifier, 'trace')
+    if namespace === 'edepot'
+      log('edepot identifier: ' + identifier, 'trace')
       parts = identifier.split('$')
+      # log the parts for debugging even though it will be overwritten
       log('parts: ' + parts.join(', '), 'debug')
-      IMAGES_EDEPOT_LOCAL_DIR + parts.join('-')
+      # PLACEHOLDER_IMAGE is used for acceptance and local development.
+      IMAGES_EDEPOT_LOCAL_DIR + PLACEHOLDER_IMAGE
     else
       IMAGES_DIR  + context['identifier']
     end
