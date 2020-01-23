@@ -12,6 +12,7 @@ services:
       - PROXY_CLIENT_SECRET
       - PROXY_DISCOVERY_URL
       - PROXY_SECURE_COOKIE
+      - USE_LOCAL_SOURCE=true
 
   tester:
     build:

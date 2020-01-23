@@ -73,18 +73,7 @@ With the extra note that `dossier_id` and `scan_id` are padded with zeros to a l
 An example URI is as follows: 
 
     edepot:SA$00037$SA00000244_00002.jpg
-
-### edepot whitelisting
-
-Previously, this code did image whitelisting and authorization using gatekeeper. Since this server will now be running behind the [iiif-auth-proxy], which implements all athorization logic, all whitelisting and authorization with gatekeeper has been removed from this code.
-
-To test restricted and unrestricted images we've got the  
-
-* http://localhost:8080/iiif/2/edepot_local:ST$00001$ST00005_00001.jpg/full/1000,/0/default.png,
-**Restricted image**, relates to image `example_images/edepot/ST-00001-ST00005_00001.jpg`
-* http://localhost:8080/iiif/2/edepot_local:ST$00014$ST00000109_00001.JPG/full/1000,/0/default.png,
-**Unrestricted**, relates to image `example_images/edepot/ST-00014-ST00000109_00001.JPG` 
-
+    
 
 ## Delegate Script
 
