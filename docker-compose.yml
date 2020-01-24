@@ -19,3 +19,6 @@ services:
       context: ./
       dockerfile: Dockerfile
       target: tester
+    environment:
+      - USE_LOCAL_SOURCE=false
+

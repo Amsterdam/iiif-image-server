@@ -160,7 +160,7 @@ class CustomDelegate
     log('source switch statement, identifier: ' + identifier, 'trace')
     # This flag is meant for local and acceptance environment to only allow accessing 
     # the filesystem
-    if ENV['USE_LOCAL_SOURCE'] == false then
+    if ENV['USE_LOCAL_SOURCE'] == 'false' then
       source = 'HttpSource'
     else
       source = 'FilesystemSource'

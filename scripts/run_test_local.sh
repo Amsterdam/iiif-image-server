@@ -20,5 +20,6 @@ echo ""
  echo ""
 
  echo "## filesystem resolution"
+ export USE_LOCAL_SOURCE=true
  ./config/delegates_test.rb fs:test.jpg "/images/fs:test.jpg"
  echo ""
