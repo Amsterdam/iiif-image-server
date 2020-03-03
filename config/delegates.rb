@@ -88,10 +88,6 @@ class CustomDelegate
     return parts.first, parts.last
   end
 
-  def decode_edepot_identifier(identifier)
-    return identifier.gsub('-', '/')
-  end
-
   ##
   # Returns authorization status for the current request. Will be called upon
   # all requests to all public endpoints.
@@ -189,10 +185,7 @@ class CustomDelegate
 
     if namespace === 'edepot'
       log('edepot identifier: ' + identifier, 'trace')
-      parts = identifier.split('$')
-      # log the parts for debugging even though it will be overwritten
-      log('parts: ' + parts.join(', '), 'debug')
-      # PLACEHOLDER_IMAGE is used for acceptance and local development.
+      # For testing, we completely ignore the identifier and serve the PLACEHOLDER_IMAGE instead
       IMAGES_EDEPOT_LOCAL_DIR + PLACEHOLDER_IMAGE
     else
       IMAGES_DIR  + context['identifier']
@@ -223,9 +216,9 @@ class CustomDelegate
     when 'beeldbank'
       return "https://beeldbank.amsterdam.nl/component/ams_memorixbeeld_download/?format=download&id=#{identifier}"
     when 'edepot'
-      edepot_identifier = decode_edepot_identifier(identifier)
+      edepot_identifier = identifier.gsub('-', '/')
       uri = URI.decode(edepot_identifier)
-
+      
       return {
         "uri" => "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/#{uri}",
         "headers" => {
