@@ -89,7 +89,7 @@ class CustomDelegate
   end
 
   def decode_edepot_identifier(identifier)
-    return identifier.gsub('$', '/')
+    return identifier.gsub('-', '/')
   end
 
   ##
@@ -185,7 +185,7 @@ class CustomDelegate
   def filesystemsource_pathname(options = {})
     namespace, identifier = identifier_parts()
 
-    log('namespace: ' + namespace, 'trace')
+    log('namespace: ' + namespace, 'debug')
 
     if namespace === 'edepot'
       log('edepot identifier: ' + identifier, 'trace')
