@@ -7,8 +7,8 @@ EXPOSE 8080
 
 # Update packages and install tools
 # net-tools is added below to have netstat available for debugging
-RUN apt update -y
-RUN apt install -y --no-install-recommends \
+RUN apt update -y && \
+    apt install -y --no-install-recommends \
       wget unzip curl net-tools \
       graphicsmagick imagemagick ffmpeg python \
       maven default-jre
@@ -23,7 +23,7 @@ RUN echo 'rebuilding'
 # Get and unpack Cantaloupe release archive
 RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v${CANTALOUPE_VERSION}.zip
 RUN unzip cantaloupe-git.zip
-RUN ls
+
 RUN cd /tmp/cantaloupe-${CANTALOUPE_VERSION} && mvn clean package -DskipTests
 RUN cd /usr/local \
       && unzip /tmp/cantaloupe-${CANTALOUPE_VERSION}/target/cantaloupe-${CANTALOUPE_VERSION}.zip \
@@ -60,8 +60,8 @@ CMD "./scripts/start-services.sh"
 FROM base AS tester
 
 # Install jruby interpreter to mimick Cantaloupe script behavior
-RUN apt-get update -y && \
-    apt-get install -y jruby && \
+RUN apt update -y && \
+    apt install -y jruby && \
     rm -rf /var/lib/apt/lists/*
 RUN rm /usr/bin/ruby && ln -s /usr/bin/jruby /usr/bin/ruby
 
