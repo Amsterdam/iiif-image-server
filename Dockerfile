@@ -1,13 +1,14 @@
 FROM ubuntu:18.04 AS base
 
 ARG MAVEN_OPTS
+ARG CANTALOUPE_VERSION="4.1.5"
 
 EXPOSE 8080
 
 # Update packages and install tools
 # net-tools is added below to have netstat available for debugging
-RUN apt update -y
-RUN apt install -y --no-install-recommends \
+RUN apt update -y && \
+    apt install -y --no-install-recommends \
       wget unzip curl net-tools \
       graphicsmagick imagemagick ffmpeg python \
       maven default-jre
@@ -20,14 +21,13 @@ WORKDIR /tmp
 
 RUN echo 'rebuilding'
 # Get and unpack Cantaloupe release archive
-# TODO: use $CANTALOUPE_VERSION instead of hardcoding it here
-RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v4.1.4.zip
+RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v${CANTALOUPE_VERSION}.zip
 RUN unzip cantaloupe-git.zip
-RUN ls
-RUN cd /tmp/cantaloupe-4.1.4 && mvn clean package -DskipTests
+
+RUN cd /tmp/cantaloupe-${CANTALOUPE_VERSION} && mvn clean package -DskipTests
 RUN cd /usr/local \
-      && unzip /tmp/cantaloupe-4.1.4/target/cantaloupe-4.1.4.zip \
-      && ln -s cantaloupe-4.1.4 cantaloupe
+      && unzip /tmp/cantaloupe-${CANTALOUPE_VERSION}/target/cantaloupe-${CANTALOUPE_VERSION}.zip \
+      && ln -s cantaloupe-${CANTALOUPE_VERSION} cantaloupe
 
 RUN mkdir -p /var/log/cantaloupe /var/cache/cantaloupe \
     && chown -R datapunt /var/log/cantaloupe /var/cache/cantaloupe \
@@ -60,8 +60,8 @@ CMD "./scripts/start-services.sh"
 FROM base AS tester
 
 # Install jruby interpreter to mimick Cantaloupe script behavior
-RUN apt-get update -y && \
-    apt-get install -y jruby && \
+RUN apt update -y && \
+    apt install -y jruby && \
     rm -rf /var/lib/apt/lists/*
 RUN rm /usr/bin/ruby && ln -s /usr/bin/jruby /usr/bin/ruby
 
