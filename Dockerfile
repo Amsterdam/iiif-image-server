@@ -1,6 +1,7 @@
 FROM ubuntu:18.04 AS base
 
 ARG MAVEN_OPTS
+ARG CANTALOUPE_VERSION="4.1.4"
 
 EXPOSE 8080
 
@@ -20,14 +21,13 @@ WORKDIR /tmp
 
 RUN echo 'rebuilding'
 # Get and unpack Cantaloupe release archive
-# TODO: use $CANTALOUPE_VERSION instead of hardcoding it here
-RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v4.1.4.zip
+RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v${CANTALOUPE_VERSION}.zip
 RUN unzip cantaloupe-git.zip
 RUN ls
-RUN cd /tmp/cantaloupe-4.1.4 && mvn clean package -DskipTests
+RUN cd /tmp/cantaloupe-${CANTALOUPE_VERSION} && mvn clean package -DskipTests
 RUN cd /usr/local \
-      && unzip /tmp/cantaloupe-4.1.4/target/cantaloupe-4.1.4.zip \
-      && ln -s cantaloupe-4.1.4 cantaloupe
+      && unzip /tmp/cantaloupe-${CANTALOUPE_VERSION}/target/cantaloupe-${CANTALOUPE_VERSION}.zip \
+      && ln -s cantaloupe-${CANTALOUPE_VERSION} cantaloupe
 
 RUN mkdir -p /var/log/cantaloupe /var/cache/cantaloupe \
     && chown -R datapunt /var/log/cantaloupe /var/cache/cantaloupe \
