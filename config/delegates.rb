@@ -81,6 +81,8 @@ class CustomDelegate
   IMAGES_DIR = '/images/'
   IMAGES_EDEPOT_LOCAL_DIR = IMAGES_DIR + 'edepot/'
   PLACEHOLDER_IMAGE = 'duckhorse.jpg'
+  PLACEHOLDER_PDF = 'duckhorse.pdf'
+  EDEPOT_BASE_URL = "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/#"
 
   def identifier_parts
     identifier = context['identifier']
@@ -182,11 +184,16 @@ class CustomDelegate
     namespace, identifier = identifier_parts()
 
     log('namespace: ' + namespace, 'debug')
+    log('identifier: ' + identifier, 'debug')
 
     if namespace === 'edepot'
       log('edepot identifier: ' + identifier, 'trace')
-      # For testing, we completely ignore the identifier and serve the PLACEHOLDER_IMAGE instead
-      IMAGES_EDEPOT_LOCAL_DIR + PLACEHOLDER_IMAGE
+      # For testing, we completely ignore the identifier and serve a placeholder instead
+      if identifier.downcase.include? 'pdf'
+        IMAGES_EDEPOT_LOCAL_DIR + PLACEHOLDER_PDF
+      else
+        IMAGES_EDEPOT_LOCAL_DIR + PLACEHOLDER_IMAGE
+      end
     else
       IMAGES_DIR  + context['identifier']
     end
@@ -208,7 +215,9 @@ class CustomDelegate
   #
   def httpsource_resource_info(options = {})
     namespace, identifier = identifier_parts()
-
+    identifier = identifier.gsub('-', '/')
+    uri = URI.decode(identifier)
+    
     # TODO: read base URIs from config file, see commit 850c9fd38b1072b2a4374f45cd810fad12bd45e8 for load_props code
     case namespace
     when 'objectstore'
@@ -216,14 +225,9 @@ class CustomDelegate
     when 'beeldbank'
       return "https://beeldbank.amsterdam.nl/component/ams_memorixbeeld_download/?format=download&id=#{identifier}"
     when 'edepot'
-      edepot_identifier = identifier.gsub('-', '/')
-      uri = URI.decode(edepot_identifier)
-      
       return {
-        "uri" => "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/#{uri}",
-        "headers" => {
-          "Authorization" => ENV['HCP_AUTHORIZATION']
-        }
+        "uri" => EDEPOT_BASE_URL + uri,
+        "headers" => {"Authorization" => ENV['HCP_AUTHORIZATION']}
       }
     end
   end
