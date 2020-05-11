@@ -30,7 +30,7 @@ To start Cantaloupe, run:
 Now, Cantaloupe is running on port 8080 (http://localhost:8080/).
 
 ### Cantaloupe 
-By default, Cantaloupe will serve the images in the [`example-images`](example-images) directory. This directory currently contains one image: _[General view, looking southwest to Manhattan from Manhattan Bridge, Manhattan](https://digitalcollections.nypl.org/items/510d47d9-4fb6-a3d9-e040-e00a18064a99)_ from the New York Public Library's Digital Collections.
+By default, Cantaloupe will serve the images in the [`example-images`](example-images) directory. This directory currently contains a couple images.
 
 To view the [image information](https://iiif.io/api/image/2.1/#image-information) of this image, go to:
 
@@ -66,13 +66,13 @@ Edepot links (BWT app) are structured as follows:
 
 Where the `identifier` is:
 
-    <namespace>:<stadsdeel>$<dossier_id>$<document_id>_<scan_id>.jpg
+    <namespace>:<stadsdeel>-<dossier_id>-<document_id>_<scan_id>.jpg
 
 With the extra note that `dossier_id` and `scan_id` are padded with zeros to a length of 5 digits.
 
 An example URI is as follows: 
 
-    edepot:SA$00037$SA00000244_00002.jpg
+    edepot:SA-00037-SA00000244_00002.jpg
     
 
 ## Delegate Script
