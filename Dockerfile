@@ -24,6 +24,12 @@ RUN echo 'rebuilding'
 RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v${CANTALOUPE_VERSION}.zip
 RUN unzip cantaloupe-git.zip
 
+# Add mirrors for maven central since they were offline
+# Inspired by https://github.com/geosolutions-it/imageio-ext/issues/214#issuecomment-616111007
+RUN mkdir ~/.m2 && cp /etc/maven/settings.xml ~/.m2/settings.xml && \
+    MIRRORS="\n    <mirror>\n      <id>central<\/id>\n      <name>central<\/name>\n      <url>https:\/\/repo1.maven.org\/maven2<\/url>\n      <mirrorOf>central.maven.org<\/mirrorOf>\n    <\/mirror>\n    <mirror>\n      <id>osgeo-release<\/id>\n      <name>OSGeo Repository<\/name>\n      <url>https:\/\/repo.osgeo.org\/repository\/release\/<\/url>\n      <mirrorOf>osgeo<\/mirrorOf>\n    <\/mirror>\n    <mirror>\n      <id>geoserver-releases<\/id>\n      <name>Boundless Repository<\/name>\n      <url>https:\/\/repo.osgeo.org\/repository\/Geoserver-releases\/<\/url>\n      <mirrorOf>boundless<\/mirrorOf>\n    <\/mirror>\n" && \
+    sed -i "s/<mirrors>/<mirrors>\n$MIRRORS/" ~/.m2/settings.xml
+
 RUN cd /tmp/cantaloupe-${CANTALOUPE_VERSION} && mvn clean package -DskipTests
 RUN cd /usr/local \
       && unzip /tmp/cantaloupe-${CANTALOUPE_VERSION}/target/cantaloupe-${CANTALOUPE_VERSION}.zip \
