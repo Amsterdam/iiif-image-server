@@ -3,8 +3,7 @@
 This repository contains a Dockerfile to build a Docker image to run and test [Cantaloupe](https://medusa-project.github.io/cantaloupe/).
 Cantaloupe is an open-source image server writtin in Java and complies with the [IIIF Image API](https://iiif.io/api/image/2.1/).
 
-Basic authorization is handled by Keycloak Gatekeeper.
-Gatekeeper acts as a proxy in front of the Cantaloupe image server. 
+Basic authorization is handled by the [iiif-auth-proxy](https://github.com/Amsterdam/iiif-auth-proxy)
 
 For more information, see:
 
@@ -14,10 +13,6 @@ For more information, see:
 
 ## Prerequisits
 Docker & [Docker Compose](https://docs.docker.com/compose/)
-
-Set the environment variables documented in [gatekeeper-config.yaml](/gatekeeper-config/gatekeeper-config.yaml).
-
-Get a DataPunt IDP user with the edepot_private role.
 
 ## Image server
 
