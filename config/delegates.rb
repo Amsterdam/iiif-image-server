@@ -82,7 +82,7 @@ class CustomDelegate
   IMAGES_EDEPOT_LOCAL_DIR = IMAGES_DIR + 'edepot/'
   PLACEHOLDER_IMAGE = 'duckhorse.jpg'
   PLACEHOLDER_PDF = 'duckhorse.pdf'
-  EDEPOT_BASE_URL = "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/#"
+  EDEPOT_BASE_URL = "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/"
 
   def identifier_parts
     identifier = context['identifier']
@@ -215,8 +215,6 @@ class CustomDelegate
   #
   def httpsource_resource_info(options = {})
     namespace, identifier = identifier_parts()
-    identifier = identifier.gsub('-', '/')
-    uri = URI.decode(identifier)
     
     # TODO: read base URIs from config file, see commit 850c9fd38b1072b2a4374f45cd810fad12bd45e8 for load_props code
     case namespace
@@ -225,6 +223,9 @@ class CustomDelegate
     when 'beeldbank'
       return "https://beeldbank.amsterdam.nl/component/ams_memorixbeeld_download/?format=download&id=#{identifier}"
     when 'edepot'
+      identifier = identifier.gsub('-', '/')
+      uri = URI.decode(identifier)
+    
       return {
         "uri" => EDEPOT_BASE_URL + uri,
         "headers" => {"Authorization" => ENV['HCP_AUTHORIZATION']}
