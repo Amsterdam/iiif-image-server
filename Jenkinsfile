@@ -24,7 +24,7 @@ node {
 
     stage("Build image") {
         tryStep "build", {
-            docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
+            docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
                 def image = docker.build("datapunt/iiif:${env.BUILD_NUMBER}", "--target server -f Dockerfile .")
                 image.push()
             }
@@ -33,7 +33,7 @@ node {
 
     stage("Test") {
         tryStep "test", {
-            docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
+            docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
                 sh './scripts/run_test_docker.sh'
             }
         }
@@ -45,7 +45,7 @@ if ("${env.BRANCH_NAME}" == "master") {
     node {
         stage('Push acceptance image') {
             tryStep "image tagging", {
-                docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
+                docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
                     def image = docker.image("datapunt/iiif:${env.BUILD_NUMBER}")
                     image.pull()
                     image.push("acceptance")
@@ -74,7 +74,7 @@ if ("${env.BRANCH_NAME}" == "master") {
     node {
         stage('Push production image') {
             tryStep "image tagging", {
-               docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
+               docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
                 def image = docker.image("datapunt/iiif:${env.BUILD_NUMBER}")
                     image.pull()
                     image.push("production")
