@@ -82,7 +82,7 @@ class CustomDelegate
   IMAGES_EDEPOT_LOCAL_DIR = IMAGES_DIR + 'edepot/'
   PLACEHOLDER_IMAGE = 'duckhorse.jpg'
   PLACEHOLDER_PDF = 'duckhorse.pdf'
-  EDEPOT_BASE_URL = "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/#"
+  EDEPOT_BASE_URL = "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/"
 
   def identifier_parts
     identifier = context['identifier']
