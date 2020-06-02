@@ -9,6 +9,8 @@ services:
       - "8080:8080"
     environment:
       - USE_LOCAL_SOURCE=true
+      - START_STUNNEL=false
+      - IIIF_IMAGE_SERVER_WABO_CERT="the contents of the cert file"
 
   tester:
     build:
@@ -17,4 +19,3 @@ services:
       target: tester
     environment:
       - USE_LOCAL_SOURCE=false
-
