@@ -7,6 +7,7 @@ EXPOSE 8080
 
 # Update packages and install tools
 # net-tools is added below to have netstat available for debugging
+# stunnel4 is for adding the client side certificate to the wabo requests
 RUN apt update -y && \
     apt install -y --no-install-recommends \
       wget unzip curl net-tools \
