@@ -11,7 +11,8 @@ RUN apt update -y && \
     apt install -y --no-install-recommends \
       wget unzip curl net-tools \
       graphicsmagick imagemagick ffmpeg python \
-      maven default-jre
+      maven default-jre \
+      stunnel4
 RUN rm -rf /var/lib/apt/lists/*
 
 # Run non privileged
