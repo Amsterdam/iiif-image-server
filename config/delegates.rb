@@ -83,6 +83,9 @@ class CustomDelegate
   PLACEHOLDER_IMAGE = 'duckhorse.jpg'
   PLACEHOLDER_PDF = 'duckhorse.pdf'
   EDEPOT_BASE_URL = "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/"
+  WABO_BASE_URL = "http://127.0.0.1:50000/webDAV"  # Has to be the same as in scripts/stunnel.conf
+  # The WABO_BASE_URL above is sent to stunnel which adds the client side
+  # cert to correctly authenticate at conversiestraatwabo.amsterdam.nl
 
   def identifier_parts
     identifier = context['identifier']
@@ -229,6 +232,13 @@ class CustomDelegate
       return {
         "uri" => EDEPOT_BASE_URL + uri,
         "headers" => {"Authorization" => ENV['HCP_AUTHORIZATION']}
+      }
+    when 'wabo'
+      identifier = identifier.gsub('\\\\', '/')  # This is needed until a bug in the iiif-metadata-server is solved
+      uri = URI.decode(identifier)
+      return {
+        "uri" => WABO_BASE_URL + uri,
+        "headers" => {"Host" => "conversiestraatwabo.amsterdam.nl"}
       }
     end
   end
