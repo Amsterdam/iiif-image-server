@@ -10,7 +10,6 @@ test ! -d scripts && echo "scripts dir not found in $PWD, exiting..." && exit 1
 # Write cert file from env var
 echo -e "$IIIF_IMAGE_SERVER_WABO_CERT" | base64 --decode  > /tmp/sw444v1912.pem
 
-sleep 600  # For debugging stunnel on acc
 # Start stunnel
 if [ "$START_STUNNEL" = false ] ; then
     echo "## NOT starting stunnel"
