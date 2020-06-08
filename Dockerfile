@@ -41,9 +41,6 @@ RUN mkdir -p /var/log/cantaloupe /var/cache/cantaloupe \
     && chown -R datapunt /var/log/cantaloupe /var/cache/cantaloupe \
     && cp /usr/local/cantaloupe/deps/Linux-x86-64/lib/* /usr/lib/
 
-RUN mkdir -p /var/log/gatekeeper \
-    && chown -R datapunt /var/log/gatekeeper
-
 RUN mkdir -p /app && chown datapunt /app
 
 #
