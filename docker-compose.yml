@@ -10,7 +10,7 @@ services:
     environment:
       - USE_LOCAL_SOURCE=true
       - START_STUNNEL=false
-      - IIIF_IMAGE_SERVER_WABO_CERT="the contents of the cert file"
+      - IIIF_IMAGE_SERVER_WABO_CERT=dGhlIGNvbnRlbnRzIG9mIHRoZSBjZXJ0IGZpbGU=  # This says "the contents of the cert file"
 
   tester:
     build:
