@@ -15,8 +15,16 @@ echo ""
  ./config/delegates_test.rb 'edepot:SA-00702-SA00632608_00001.jpg' "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/SA/00702/SA00632608_00001.jpg"
  echo ""
 
+echo "## edepot resolution with space in name"
+ ./config/delegates_test.rb 'edepot:SA-00702%20(2)-SA00632608_00001.jpg' "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/SA/00702%20(2)/SA00632608_00001.jpg"
+ echo ""
+
  echo "## wabo resolution"
  ./config/delegates_test.rb 'wabo:SDC-DOCUMENTUM-PRIMARY-27-0901B69980392066.PDF' "http://127.0.0.1:50000/webDAV/SDC/DOCUMENTUM/PRIMARY/27/0901B69980392066.PDF"
+ echo ""
+
+ echo "## wabo resolution with space in name"
+ ./config/delegates_test.rb 'wabo:SDW-ACTIVITY_DOCS-Procesinformatie%20sdw_51322878.pdf/info.json' "http://127.0.0.1:50000/webDAV/SDW/ACTIVITY_DOCS/Procesinformatie%20sdw_51322878.pdf/info.json"
  echo ""
 
  echo "## beeldbank resolution"

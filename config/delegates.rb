@@ -159,14 +159,14 @@ class CustomDelegate
     namespace, identifier = identifier_parts()
 
     log('source switch statement, identifier: ' + identifier, 'trace')
-    # This flag is meant for local and acceptance environment to only allow accessing 
+    # This flag is meant for local and acceptance environment to only allow accessing
     # the filesystem
     if ENV['USE_LOCAL_SOURCE'] == 'false' then
       source = 'HttpSource'
     else
       source = 'FilesystemSource'
     end
-    
+
     log('using source: ' + source, 'debug')
     source
   end
@@ -218,7 +218,7 @@ class CustomDelegate
   #
   def httpsource_resource_info(options = {})
     namespace, identifier = identifier_parts()
-    
+
     # TODO: read base URIs from config file, see commit 850c9fd38b1072b2a4374f45cd810fad12bd45e8 for load_props code
     case namespace
     when 'objectstore'
@@ -227,16 +227,14 @@ class CustomDelegate
       return "https://beeldbank.amsterdam.nl/component/ams_memorixbeeld_download/?format=download&id=#{identifier}"
     when 'edepot'
       identifier = identifier.gsub('-', '/')
-      uri = URI.decode(identifier)
       return {
-        "uri" => EDEPOT_BASE_URL + uri,
+        "uri" => EDEPOT_BASE_URL + identifier,
         "headers" => {"Authorization" => ENV['HCP_AUTHORIZATION']}
       }
     when 'wabo'
       identifier = identifier.gsub('-', '/')
-      uri = URI.decode(identifier)
       return {
-        "uri" => WABO_BASE_URL + uri,
+        "uri" => WABO_BASE_URL + identifier,
         "headers" => {"Host" => "conversiestraatwabo.amsterdam.nl"}
       }
     end
