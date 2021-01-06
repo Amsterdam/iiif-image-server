@@ -227,14 +227,16 @@ class CustomDelegate
       return "https://beeldbank.amsterdam.nl/component/ams_memorixbeeld_download/?format=download&id=#{identifier}"
     when 'edepot'
       identifier = identifier.gsub('-', '/')
+      uri = URI.encode(identifier)
       return {
-        "uri" => EDEPOT_BASE_URL + identifier,
+        "uri" => EDEPOT_BASE_URL + uri,
         "headers" => {"Authorization" => ENV['HCP_AUTHORIZATION']}
       }
     when 'wabo'
       identifier = identifier.gsub('-', '/')
+      uri = URI.encode(identifier)
       return {
-        "uri" => WABO_BASE_URL + identifier,
+        "uri" => WABO_BASE_URL + uri,
         "headers" => {"Host" => "conversiestraatwabo.amsterdam.nl"}
       }
     end
