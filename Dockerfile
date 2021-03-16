@@ -1,7 +1,12 @@
-FROM ubuntu:18.04 AS base
+FROM ubuntu:20.04 AS base
 
+ARG DEBIAN_FRONTEND=noninteractive
 ARG MAVEN_OPTS
-ENV CANTALOUPE_VERSION="4.1.5"
+# ENV CANTALOUPE_VERSION="4.1.5"
+ENV CANTALOUPE_VERSION="develop"
+ENV CANTALOUPE_VERSION_NAME="5.0-SNAPSHOT"
+
+# /tmp/cantaloupe-develop/target/cantaloupe-5.0-SNAPSHOT.zip
 
 EXPOSE 8080
 
@@ -22,8 +27,10 @@ RUN adduser --system datapunt
 WORKDIR /tmp
 
 RUN echo 'rebuilding'
+# Get and unpack Cantaloupe develop archive. Perhaps we should use a specific commit  to make this reproducable
+RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/develop.zip
 # Get and unpack Cantaloupe release archive
-RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v${CANTALOUPE_VERSION}.zip
+# RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v${CANTALOUPE_VERSION}.zip
 RUN unzip cantaloupe-git.zip
 
 # Add mirrors for maven central since they were offline
@@ -34,8 +41,8 @@ RUN mkdir ~/.m2 && cp /etc/maven/settings.xml ~/.m2/settings.xml && \
 
 RUN cd /tmp/cantaloupe-${CANTALOUPE_VERSION} && mvn clean package -DskipTests
 RUN cd /usr/local \
-      && unzip /tmp/cantaloupe-${CANTALOUPE_VERSION}/target/cantaloupe-${CANTALOUPE_VERSION}.zip \
-      && ln -s cantaloupe-${CANTALOUPE_VERSION} cantaloupe
+      && unzip /tmp/cantaloupe-${CANTALOUPE_VERSION}/target/cantaloupe-${CANTALOUPE_VERSION_NAME}.zip \
+      && ln -s cantaloupe-${CANTALOUPE_VERSION_NAME} cantaloupe
 
 RUN mkdir -p /var/log/cantaloupe /var/cache/cantaloupe \
     && chown -R datapunt /var/log/cantaloupe /var/cache/cantaloupe \

@@ -20,7 +20,7 @@ fi
 
 
 echo "Starting cantaloupe"
-exec java -Dcantaloupe.config=/app/cantaloupe/cantaloupe.properties -Xmx2g -jar /usr/local/cantaloupe/cantaloupe-${CANTALOUPE_VERSION}.war  \
+exec java -Dcantaloupe.config=/app/cantaloupe/cantaloupe.properties -Xmx2g -jar /usr/local/cantaloupe/cantaloupe-${CANTALOUPE_VERSION_NAME}.jar  \
     2>&1 | tee /var/log/cantaloupe/cantaloupe.log
 
 ## Command to start cantaloupe with debug options

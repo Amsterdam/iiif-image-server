@@ -5,7 +5,7 @@ require 'uri'
 #
 begin
   require 'java'
-  $delegate_logger = Java::edu.illinois.library.cantaloupe.script.Logger
+  $delegate_logger = Java::edu.illinois.library.cantaloupe.delegate.Logger
 rescue
   puts 'Could not load Cantaloupe logger'
 end

@@ -77,7 +77,7 @@ Source resolution is done through the "delegate" script. Depending on the "ident
 See:
 
 - [`config/delegates.rb`](config/delegates.rb)
-- https://cantaloupe-project.github.io/manual/4.0/delegate-script.html
+- https://cantaloupe-project.github.io/manual/4.1/delegate-script.html
 
 ## Testing
 
