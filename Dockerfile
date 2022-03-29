@@ -1,7 +1,7 @@
 FROM ubuntu:18.04 AS base
 
 ARG MAVEN_OPTS
-ENV CANTALOUPE_VERSION="4.1.5"
+ENV CANTALOUPE_VERSION="4.1.11"
 
 EXPOSE 8080
 
@@ -13,8 +13,8 @@ RUN apt update -y && \
       wget unzip curl net-tools \
       graphicsmagick imagemagick ffmpeg python \
       maven default-jre \
-      stunnel4
-RUN rm -rf /var/lib/apt/lists/*
+      stunnel4 && \
+      rm -rf /var/lib/apt/lists/*
 
 # Run non privileged
 RUN adduser --system datapunt
@@ -23,8 +23,8 @@ WORKDIR /tmp
 
 RUN echo 'rebuilding'
 # Get and unpack Cantaloupe release archive
-RUN wget -O cantaloupe-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v${CANTALOUPE_VERSION}.zip
-RUN unzip cantaloupe-git.zip
+RUN wget -O cantaloupe-${CANTALOUPE_VERSION}-git.zip https://github.com/cantaloupe-project/cantaloupe/archive/v${CANTALOUPE_VERSION}.zip
+RUN unzip cantaloupe-${CANTALOUPE_VERSION}-git.zip
 
 # Add mirrors for maven central since they were offline
 # Inspired by https://github.com/geosolutions-it/imageio-ext/issues/214#issuecomment-616111007
