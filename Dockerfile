@@ -65,38 +65,9 @@ CMD "./scripts/start-services.sh"
 FROM base AS tester
 
 # Install jruby interpreter to mimick Cantaloupe script behavior
-
-# USING APT
-#RUN apt update -y
-#RUN apt-add-repository -y ppa:rael-gc/rvm
-#RUN apt install -y rvm
-#RUN rm -rf /var/lib/apt/lists/*
-#RUN usermod -a -G rvm root
-#RUN source "/etc/profile.d/rvm.sh"
-#RUN rvm install jruby
-
-# USING RVM
-#RUN apt update -y
-#RUN apt install -y gnupg2
-#RUN gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-#RUN \curl -sSL https://get.rvm.io | bash -s stable --ruby=jruby
-#RUN ["/bin/bash", "-c", "source /usr/local/rvm/scripts/rvm"]
-##RUN which jruby
-##RUN which ruby
-#RUN sleep 1000
-
-# MANUALLY DOWNLOADING THE BINARY
-ENV JRUBY_VERSION="9.3.7.0"
-WORKDIR /tmp
-RUN wget https://repo1.maven.org/maven2/org/jruby/jruby-dist/${JRUBY_VERSION}/jruby-dist-${JRUBY_VERSION}-bin.tar.gz
-RUN tar -xvf jruby-dist-${JRUBY_VERSION}-bin.tar.gz
-#ENV PATH="${PATH}:/tmp/${JRUBY_VERSION}/bin"
-RUN mv jruby-${JRUBY_VERSION}/ /usr/local/bin/
-USER datapunt
-ENV PATH="${PATH}:/usr/local/bin/jruby-${JRUBY_VERSION}/bin"
-#ENV PATH="${PATH}:/root/jruby-9.3.7.0/bin"
-USER root
-RUN ln -s `which jruby` /usr/bin/ruby
+RUN apt update -y && \
+    apt install -y ruby && \
+    rm -rf /var/lib/apt/lists/*
 
 USER datapunt
 WORKDIR /home/datapunt/
