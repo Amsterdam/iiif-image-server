@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 AS base
+FROM ubuntu:22.04 AS base
 
 ARG MAVEN_OPTS
 ENV CANTALOUPE_VERSION="4.1.11"
@@ -11,7 +11,7 @@ EXPOSE 8080
 RUN apt update -y && \
     apt install -y --no-install-recommends \
       wget unzip curl net-tools \
-      graphicsmagick imagemagick ffmpeg python \
+      graphicsmagick imagemagick ffmpeg python3 \
       maven default-jre \
       stunnel4 && \
       rm -rf /var/lib/apt/lists/*
@@ -66,9 +66,8 @@ FROM base AS tester
 
 # Install jruby interpreter to mimick Cantaloupe script behavior
 RUN apt update -y && \
-    apt install -y jruby && \
+    apt install -y ruby && \
     rm -rf /var/lib/apt/lists/*
-RUN rm /usr/bin/ruby && ln -s /usr/bin/jruby /usr/bin/ruby
 
 USER datapunt
 WORKDIR /home/datapunt/
