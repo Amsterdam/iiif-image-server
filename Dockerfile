@@ -64,10 +64,17 @@ CMD "./scripts/start-services.sh"
 #
 FROM base AS tester
 
+ARG JRUBY_VERSION
+
 # Install jruby interpreter to mimick Cantaloupe script behavior
-RUN apt update -y && \
-    apt install -y ruby && \
-    rm -rf /var/lib/apt/lists/*
+WORKDIR /tmp
+RUN wget https://repo1.maven.org/maven2/org/jruby/jruby-dist/${JRUBY_VERSION}/jruby-dist-${JRUBY_VERSION}-bin.tar.gz
+RUN tar -xvf jruby-dist-${JRUBY_VERSION}-bin.tar.gz
+RUN mv jruby-${JRUBY_VERSION}/ /usr/local/bin/
+USER datapunt
+ENV PATH="${PATH}:/usr/local/bin/jruby-${JRUBY_VERSION}/bin"
+USER root
+RUN ln -s `which jruby` /usr/bin/ruby
 
 USER datapunt
 WORKDIR /home/datapunt/

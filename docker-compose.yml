@@ -17,5 +17,7 @@ services:
       context: ./
       dockerfile: Dockerfile
       target: tester
+      args:
+      - JRUBY_VERSION=9.3.7.0  # Upgrade when you feel like it is time
     environment:
       - USE_LOCAL_SOURCE=false
