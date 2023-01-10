@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS base
+FROM ubuntu:18.04 AS base
 
 ARG MAVEN_OPTS
 ENV CANTALOUPE_VERSION="4.1.11"
@@ -11,7 +11,7 @@ EXPOSE 8080
 RUN apt update -y && \
     apt install -y --no-install-recommends \
       wget unzip curl net-tools \
-      graphicsmagick imagemagick ffmpeg python3 \
+      graphicsmagick imagemagick ffmpeg python \
       maven default-jre \
       stunnel4 && \
       rm -rf /var/lib/apt/lists/*
@@ -64,17 +64,10 @@ CMD "./scripts/start-services.sh"
 #
 FROM base AS tester
 
-ARG JRUBY_VERSION
-
-# Install jruby interpreter to mimick Cantaloupe script behavior
-WORKDIR /tmp
-RUN wget https://repo1.maven.org/maven2/org/jruby/jruby-dist/${JRUBY_VERSION}/jruby-dist-${JRUBY_VERSION}-bin.tar.gz
-RUN tar -xvf jruby-dist-${JRUBY_VERSION}-bin.tar.gz
-RUN mv jruby-${JRUBY_VERSION}/ /usr/local/bin/
-USER datapunt
-ENV PATH="${PATH}:/usr/local/bin/jruby-${JRUBY_VERSION}/bin"
-USER root
-RUN ln -s `which jruby` /usr/bin/ruby
+RUN apt update -y && \
+    apt install -y jruby && \
+    rm -rf /var/lib/apt/lists/*
+RUN rm /usr/bin/ruby && ln -s /usr/bin/jruby /usr/bin/ruby
 
 USER datapunt
 WORKDIR /home/datapunt/
