@@ -1,6 +1,7 @@
 version: "3.4"
 services:
   server:
+    image: docker-registry.data.amsterdam.nl/datapunt/iiif-image-server:${VERSION:-latest}
     build:
       context: ./
       dockerfile: Dockerfile
