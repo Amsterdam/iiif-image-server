@@ -12,11 +12,11 @@ echo "## objectstore resolution"
 echo ""
 
  echo "## edepot resolution"
- ./config/delegates_test.rb 'edepot:SA-00702-SA00632608_00001.jpg' "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/SA/00702/SA00632608_00001.jpg"
+ ./config/delegates_test.rb 'edepot:SA-00702-SA00632608_00001.jpg' "https://bwt.uitplaatsing.shcp03.archivingondemand.nl/rest/SA/00702/SA00632608_00001.jpg"
  echo ""
 
 echo "## edepot resolution with space in name"
- ./config/delegates_test.rb 'edepot:SA-00702 (2)-SA00632608_00001.jpg' "https://bwt.uitplaatsing.hcp-a.basis.lan/rest/SA/00702%20(2)/SA00632608_00001.jpg"
+ ./config/delegates_test.rb 'edepot:SA-00702 (2)-SA00632608_00001.jpg' "https://bwt.uitplaatsing.shcp03.archivingondemand.nl/rest/SA/00702%20(2)/SA00632608_00001.jpg"
  echo ""
 
  echo "## wabo resolution"
