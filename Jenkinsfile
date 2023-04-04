@@ -40,7 +40,7 @@ node {
     }
 }
 
-if ("${env.BRANCH_NAME}" == "master") {
+if ("${env.BRANCH_NAME}" == "main") {
 
     node {
         stage('Push acceptance image') {
