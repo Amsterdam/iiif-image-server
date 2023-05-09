@@ -19,14 +19,6 @@ echo "## edepot resolution with space in name"
  ./config/delegates_test.rb 'edepot:SA-00702 (2)-SA00632608_00001.jpg' "https://bwt.uitplaatsing.shcp03.archivingondemand.nl/rest/SA/00702%20(2)/SA00632608_00001.jpg"
  echo ""
 
- echo "## wabo resolution"
- ./config/delegates_test.rb 'wabo:SDC-DOCUMENTUM-PRIMARY-27-0901B69980392066.PDF' "http://127.0.0.1:50000/webDAV/SDC/DOCUMENTUM/PRIMARY/27/0901B69980392066.PDF"
- echo ""
-
- echo "## wabo resolution with space in name"
- ./config/delegates_test.rb 'wabo:SDW-ACTIVITY_DOCS-Procesinformatie sdw_51322878.pdf/info.json' "http://127.0.0.1:50000/webDAV/SDW/ACTIVITY_DOCS/Procesinformatie%20sdw_51322878.pdf/info.json"
- echo ""
-
  echo "## beeldbank resolution"
  ./config/delegates_test.rb beeldbank:B00000030938 "https://beeldbank.amsterdam.nl/component/ams_memorixbeeld_download/?format=download&id=B00000030938"
  echo ""
