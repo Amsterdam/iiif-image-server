@@ -4,7 +4,7 @@ MAJOR_VERSION=`echo $VERSION | cut -d. -f1`
 
 # Get the latest version within this major version from the Cantaloupe repo tags
 REPO_VERSION=`git -c 'versionsort.suffix=-' \
-ls-remote --exit-code --refs --sort='version:refname' --tags git@github.com:cantaloupe-project/cantaloupe.git '*.*.*' \
+ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/cantaloupe-project/cantaloupe.git '*.*.*' \
 | grep v${MAJOR_VERSION} \
 | tail --lines=1 \
 | cut --delimiter='/' --fields=3 \
@@ -14,13 +14,16 @@ ls-remote --exit-code --refs --sort='version:refname' --tags git@github.com:cant
 if [ "$VERSION" = "$REPO_VERSION" ]; then
     echo -e "\n ### The current ${VERSION} is the latest version. No Upgrade needed. ### \n"
 else
-    sed -i "s/${VERSION}/${REPO_VERSION}/" Dockerfile
+    cp Dockerfile Dockerfile-new
+    sed -i'' "s/${VERSION}/${REPO_VERSION}/" Dockerfile-new
+    cp -f Dockerfile-new Dockerfile
+    rm Dockerfile-new
     echo -e "\n ### Upgraded Dockerfile from v$VERSION to v$REPO_VERSION ### \n"
 fi
 
 # Check if there is a new major version
 NEWEWST_VERSION=`git -c 'versionsort.suffix=-' \
-ls-remote --exit-code --refs --sort='version:refname' --tags git@github.com:cantaloupe-project/cantaloupe.git '*.*.*' \
+ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/cantaloupe-project/cantaloupe.git '*.*.*' \
 | grep v$((MAJOR_VERSION+1)) \
 | tail --lines=1 \
 | cut --delimiter='/' --fields=3 \
