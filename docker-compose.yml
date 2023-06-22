@@ -10,6 +10,9 @@ services:
       - "8080:8080"
     environment:
       - USE_LOCAL_SOURCE=true
+    volumes:
+      - ./upgrade_cantaloupe_version.sh:/app/cantaloupe/upgrade_cantaloupe_version.sh
+      - ./Dockerfile:/app/cantaloupe/Dockerfile
 
   tester:
     build:

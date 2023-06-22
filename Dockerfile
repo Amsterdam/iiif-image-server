@@ -11,7 +11,7 @@ RUN apt update -y && \
     apt install -y --no-install-recommends \
       wget unzip curl net-tools \
       graphicsmagick imagemagick ffmpeg python3 \
-      maven default-jre && \
+      maven default-jre git && \
       rm -rf /var/lib/apt/lists/*
 
 # Run non privileged
@@ -48,6 +48,7 @@ FROM base as server
 
 # Cantaloupe
 RUN mkdir -p /app/cantaloupe
+RUN chmod 767 /app/cantaloupe
 ENV GEM_PATH="/app/cantaloupe:${GEM_PATH}"
 COPY config/ /app/cantaloupe/
 COPY example-images/ /images/

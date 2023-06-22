@@ -6,13 +6,13 @@ dc = docker-compose
 help:                               ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-upgrade:
-	./upgrade_cantaloupe_version.sh
+requirements:
+	$(dc) run --rm server bash ./upgrade_cantaloupe_version.sh
 
 build:
 	$(dc) build
 
-push: build
+push:
 	$(dc) push
 
 app:
